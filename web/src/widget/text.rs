@@ -119,7 +119,7 @@ impl<'a, Message> Widget<Message> for Text {
         let style = bumpalo::format!(
             in bump,
             "width: {}; height: {}; font-size: {}px; color: {}; \
-            text-align: {}; font-family: {}",
+            text-align: {}; font-family: {}; white-space: pre-wrap;",
             width,
             height,
             self.size.unwrap_or(20),
