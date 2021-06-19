@@ -143,14 +143,16 @@ where
                             bounds: *viewport,
                             offset: Vector::new(0, 0),
                             content: Box::new(
-                                if let Some(background) =
+                                if let Some((background, border)) =
                                     crate::container::background(
                                         tooltip_bounds,
                                         &style,
                                     )
                                 {
                                     Primitive::Group {
-                                        primitives: vec![background, tooltip],
+                                        primitives: vec![
+                                            background, tooltip, border,
+                                        ],
                                     }
                                 } else {
                                     tooltip

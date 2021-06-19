@@ -210,12 +210,16 @@ where
                 show_controls,
             );
 
+            let (background, border) =
+                background.unwrap_or((Primitive::None, Primitive::None));
+
             (
                 Primitive::Group {
                     primitives: vec![
-                        background.unwrap_or(Primitive::None),
+                        background,
                         title_bar_primitive,
                         body_primitive,
+                        border,
                     ],
                 },
                 if title_bar_interaction > body_interaction {
@@ -228,9 +232,9 @@ where
             )
         } else {
             (
-                if let Some(background) = background {
+                if let Some((background, border)) = background {
                     Primitive::Group {
-                        primitives: vec![background, body_primitive],
+                        primitives: vec![background, body_primitive, border],
                     }
                 } else {
                     body_primitive
@@ -278,21 +282,25 @@ where
                 viewport,
             );
 
+            let (background, border) =
+                background.unwrap_or((Primitive::None, Primitive::None));
+
             (
                 Primitive::Group {
                     primitives: vec![
-                        background.unwrap_or(Primitive::None),
+                        background,
                         title_primitive,
                         controls_primitive,
+                        border,
                     ],
                 },
                 controls_interaction.max(title_interaction),
             )
         } else {
             (
-                if let Some(background) = background {
+                if let Some((background, border)) = background {
                     Primitive::Group {
-                        primitives: vec![background, title_primitive],
+                        primitives: vec![background, title_primitive, border],
                     }
                 } else {
                     title_primitive

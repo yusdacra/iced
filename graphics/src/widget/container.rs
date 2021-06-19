@@ -2,7 +2,9 @@
 use crate::container;
 use crate::defaults::{self, Defaults};
 use crate::{Backend, Primitive, Renderer};
-use iced_native::{Background, Color, Element, Layout, Point, Rectangle};
+use iced_native::{
+    Background, Color, Element, Layout, Point, Rectangle, Vector,
+};
 
 pub use iced_style::container::{Style, StyleSheet};
 
@@ -45,10 +47,10 @@ where
             viewport,
         );
 
-        if let Some(background) = background(bounds, &style) {
+        if let Some((background, border)) = background(bounds, &style) {
             (
                 Primitive::Group {
-                    primitives: vec![background, content],
+                    primitives: vec![background, content, border],
                 },
                 mouse_interaction,
             )
@@ -61,17 +63,30 @@ where
 pub(crate) fn background(
     bounds: Rectangle,
     style: &container::Style,
-) -> Option<Primitive> {
+) -> Option<(Primitive, Primitive)> {
     if style.background.is_some() || style.border_width > 0.0 {
-        Some(Primitive::Quad {
-            bounds,
-            background: style
-                .background
-                .unwrap_or(Background::Color(Color::TRANSPARENT)),
-            border_radius: style.border_radius,
-            border_width: style.border_width,
-            border_color: style.border_color,
-        })
+        Some((
+            Primitive::Quad {
+                bounds,
+                background: style
+                    .background
+                    .unwrap_or(Background::Color(Color::TRANSPARENT)),
+                border_radius: style.border_radius,
+                border_width: style.border_width,
+                border_color: Color::TRANSPARENT,
+            },
+            Primitive::Clip {
+                content: Box::new(Primitive::Quad {
+                    bounds,
+                    background: Background::Color(Color::TRANSPARENT),
+                    border_radius: style.border_radius,
+                    border_width: style.border_width,
+                    border_color: style.border_color,
+                }),
+                bounds,
+                offset: Vector::new(0, 0),
+            },
+        ))
     } else {
         None
     }
